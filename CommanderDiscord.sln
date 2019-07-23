@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommanderDiscord", "CommanderDiscord\CommanderDiscord.csproj", "{7CA1C853-ACD7-4189-AFB3-2139BEE3B823}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7CA1C853-ACD7-4189-AFB3-2139BEE3B823}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CA1C853-ACD7-4189-AFB3-2139BEE3B823}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CA1C853-ACD7-4189-AFB3-2139BEE3B823}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CA1C853-ACD7-4189-AFB3-2139BEE3B823}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7878BF4-8A55-43A1-B045-EE217772CFF7}
+	EndGlobalSection
+EndGlobal
