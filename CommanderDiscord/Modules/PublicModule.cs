@@ -14,6 +14,7 @@ namespace CommanderDiscord.Modules
     {
         // Dependency Injection will fill this value in for us
         public PictureService PictureService { get; set; }
+        public FileService FileService { get; set; }
 
         [Command("ping")]
         [Alias("pong", "hello")]
@@ -37,6 +38,31 @@ namespace CommanderDiscord.Modules
             user = user ?? Context.User;
 
             await ReplyAsync(user.ToString());
+        }
+
+        [Command("hist")]
+        public async Task Hist(uint histLength)
+        {
+            IAsyncEnumerable<IMessage> x = Context.Channel.GetMessagesAsync((int)histLength).Flatten<IMessage>();
+            IAsyncEnumerator<IMessage> y = x.GetEnumerator();
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"test.txt"))
+            {
+                while (await y.MoveNext())
+                {
+                    var sensorData = y.Current;
+                   string line = sensorData.Author + ":" + sensorData.Content;
+                    file.WriteLine(line);
+                }
+            }
+                
+
+            // Get a stream containing an image of a cat
+            //var stream = await PictureService.GetCatPictureAsync();
+            var stream = await FileService.GetFileAsync("test.txt");
+            // Streams must be seeked to their beginning before being uploaded!
+            stream.Seek(0, SeekOrigin.Begin);
+            await Context.Channel.SendFileAsync(stream, "test.txt");
         }
 
         // Ban a user
