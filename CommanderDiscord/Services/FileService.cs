@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommanderDiscord.Data.Models.Messages;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -8,6 +9,7 @@ namespace CommanderDiscord.Services
 {
     public class FileService
     {
+
         public FileService()
         { }
 

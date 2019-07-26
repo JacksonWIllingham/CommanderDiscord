@@ -1,4 +1,5 @@
-﻿using CommanderDiscord.Services;
+﻿using CommanderDiscord.Data.Models.Messages;
+using CommanderDiscord.Services;
 using Discord;
 using Discord.Commands;
 using System;
@@ -15,6 +16,8 @@ namespace CommanderDiscord.Modules
         // Dependency Injection will fill this value in for us
         public PictureService PictureService { get; set; }
         public FileService FileService { get; set; }
+
+        public MessageDatabaseService MessageDatabaseService { get; set; }
 
         [Command("ping")]
         [Alias("pong", "hello")]
@@ -50,9 +53,9 @@ namespace CommanderDiscord.Modules
             {
                 while (await y.MoveNext())
                 {
-                    var sensorData = y.Current;
+                   var sensorData = y.Current;
                    string line = sensorData.Author + ":" + sensorData.Content;
-                    file.WriteLine(line);
+                   file.WriteLine(line);
                 }
             }
                 
@@ -63,6 +66,31 @@ namespace CommanderDiscord.Modules
             // Streams must be seeked to their beginning before being uploaded!
             stream.Seek(0, SeekOrigin.Begin);
             await Context.Channel.SendFileAsync(stream, "test.txt");
+        }
+
+        [Command("bulidMarkov")]
+        public async Task bulidMarkov(uint histLength)
+        {
+            IAsyncEnumerable<IMessage> x = Context.Channel.GetMessagesAsync((int)histLength).Flatten<IMessage>();
+            IAsyncEnumerator<IMessage> y = x.GetEnumerator();
+
+            while (await y.MoveNext())
+            {
+                var msg = y.Current;
+
+                Message tmp = new Message();
+                tmp.UniqueId = msg.Author.Id;
+                tmp.Username = msg.Author.Username;
+                tmp.Content = msg.Content;
+                MessageDatabaseService.AddMessage(tmp);
+            }
+            MessageDatabaseService.Build();
+        }
+
+        [Command("markov")]
+        public async Task markov(IUser user)
+        {
+            await ReplyAsync(MessageDatabaseService.GenerateMessage(user.Username));
         }
 
         // Ban a user

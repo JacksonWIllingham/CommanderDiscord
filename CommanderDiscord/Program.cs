@@ -78,6 +78,7 @@ namespace CommanderDiscord
                 .AddSingleton<HttpClient>()
                 .AddSingleton<PictureService>()
                 .AddSingleton<FileService>()
+                .AddSingleton<MessageDatabaseService>()
                 .BuildServiceProvider();
         }
     }
