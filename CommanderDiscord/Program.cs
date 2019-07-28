@@ -79,6 +79,7 @@ namespace CommanderDiscord
                 .AddSingleton<PictureService>()
                 .AddSingleton<FileService>()
                 .AddSingleton<MessageDatabaseService>()
+                .AddSingleton<MarkovService>()
                 .BuildServiceProvider();
         }
     }

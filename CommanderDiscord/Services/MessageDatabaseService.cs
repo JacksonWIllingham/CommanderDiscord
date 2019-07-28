@@ -7,6 +7,7 @@ namespace CommanderDiscord.Services
 {
     public class MessageDatabaseService
     {
+        
         private const string STRING_TERMINATOR = "TERMINATE";
 
         private static List<Message> messages { get; set; }
@@ -46,7 +47,7 @@ namespace CommanderDiscord.Services
                 UsernameToId[m.Username] = m.UniqueId;
 
                 string body = m.Content;
-                string[] specialChars = { "!", "?", ",", "\"", "." };
+                string[] specialChars = { "!", "?", ",", "\"", ". " };
                 foreach(string c in specialChars)
                 {
                     body = body.Replace(c, " "+c+" ");
@@ -92,76 +93,81 @@ namespace CommanderDiscord.Services
             debugString();
         }
 
-        public string GenerateMessage(string Username)
+        public string GenerateMessage(ulong UserId)
         {
             string result = "";
 
-            ulong UserId = UsernameToId[Username];
-            Dictionary<string, Dictionary<string, int>> map = markovMap[UserId];
-
-            Random random = new Random();
-            int seed = random.Next(0, map.Keys.Count-1);
-            var enumerator = map.Keys.GetEnumerator();
-
-            int index = 0;
-            while(index<seed)
+            if (markovMap.ContainsKey(UserId))
             {
-                index++;
-                enumerator.MoveNext();
-            }
+                //ulong UserId = UsernameToId[Username];
+                Dictionary<string, Dictionary<string, int>> map = markovMap[UserId];
 
-            string currentWord = enumerator.Current;
-            result += currentWord;
+                Random random = new Random();
+                int seed = random.Next(0, map.Keys.Count - 1);
+                var enumerator = map.Keys.GetEnumerator();
 
-            bool run = true;
-            int MAX_LOOPS = 50;
-
-            int loops = 0;
-            while (run)
-            {
-                loops++;
-                Dictionary<string, int> z = map[currentWord];
-
-                int sum = 0;
-                foreach (string s in z.Keys)
+                int index = 0;
+                while (index < seed)
                 {
-                    sum += z[s];
+                    index++;
+                    enumerator.MoveNext();
                 }
 
-                seed = random.Next(0, sum);
+                string currentWord = enumerator.Current;
+                result += currentWord;
 
-                int currentValue = 0;
-                foreach (string s in z.Keys)
+                bool run = true;
+                int MAX_LOOPS = 50;
+
+                int loops = 0;
+                while (run)
                 {
-                    currentValue += z[s];
-                    if (currentValue >= sum)
+                    loops++;
+                    Dictionary<string, int> z = map[currentWord];
+
+                    int sum = 0;
+                    foreach (string s in z.Keys)
                     {
-                        currentWord = s;
-                        if (currentWord != STRING_TERMINATOR)
-                        {
-                            result += " "+currentWord;
-                        }
-                        break;
+                        sum += z[s];
                     }
 
-                }
+                    seed = random.Next(0, sum);
 
-                if (currentWord == STRING_TERMINATOR)
-                {
-                    run = false;
-                }
+                    int currentValue = 0;
+                    foreach (string s in z.Keys)
+                    {
+                        currentValue += z[s];
+                        if (currentValue >= sum)
+                        {
+                            currentWord = s;
+                            if (currentWord != STRING_TERMINATOR)
+                            {
+                                result += " " + currentWord;
+                            }
+                            break;
+                        }
+                    }
 
-                if (loops >= MAX_LOOPS)
-                {
-                    run = false;
-                }
+                    if (currentWord == STRING_TERMINATOR)
+                    {
+                        run = false;
+                    }
 
-                if(result.Length >= 1800)
-                {
-                    run = false;
+                    if (loops >= MAX_LOOPS)
+                    {
+                        run = false;
+                    }
+
+                    if (result.Length >= 1800)
+                    {
+                        run = false;
+                    }
                 }
             }
-
+            else
+            {
+                result = "No data";
+            }
 
             return result;
         }

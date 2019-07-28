@@ -2,6 +2,7 @@
 using CommanderDiscord.Services;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,8 @@ namespace CommanderDiscord.Modules
         // Dependency Injection will fill this value in for us
         public PictureService PictureService { get; set; }
         public FileService FileService { get; set; }
+
+        public MarkovService MarkovService { get; set; }
 
         public MessageDatabaseService MessageDatabaseService { get; set; }
 
@@ -68,29 +71,22 @@ namespace CommanderDiscord.Modules
             await Context.Channel.SendFileAsync(stream, "test.txt");
         }
 
-        [Command("bulidMarkov")]
-        public async Task bulidMarkov(uint histLength)
+        [Command("bm")]
+        public async Task bulidMarkov()
         {
-            IAsyncEnumerable<IMessage> x = Context.Channel.GetMessagesAsync((int)histLength).Flatten<IMessage>();
-            IAsyncEnumerator<IMessage> y = x.GetEnumerator();
-
-            while (await y.MoveNext())
-            {
-                var msg = y.Current;
-
-                Message tmp = new Message();
-                tmp.UniqueId = msg.Author.Id;
-                tmp.Username = msg.Author.Username;
-                tmp.Content = msg.Content;
-                MessageDatabaseService.AddMessage(tmp);
-            }
-            MessageDatabaseService.Build();
+            MarkovService.BuildLoad(Context.Guild);            
         }
 
-        [Command("markov")]
+        [Command("bmasync", RunMode = RunMode.Async)]
+        public async Task bulidMarkovAsync()
+        {
+            MarkovService.BuildLoad(Context.Guild);
+        }
+
+        [Command("m")]
         public async Task markov(IUser user)
         {
-            await ReplyAsync(MessageDatabaseService.GenerateMessage(user.Username));
+            await ReplyAsync(MarkovService.GenerateMessage(user.Id));
         }
 
         // Ban a user
