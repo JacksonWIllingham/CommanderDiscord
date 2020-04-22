@@ -77,6 +77,7 @@ namespace CommanderDiscord
                 .AddSingleton<CommandHandlingService>()
                 .AddSingleton<HttpClient>()
                 .AddSingleton<PictureService>()
+                .AddSingleton<VoiceService>()
                 .AddSingleton<FileService>()
                 .AddSingleton<MessageDatabaseService>()
                 .AddSingleton<MarkovService>()
